@@ -63,6 +63,20 @@
 
 **Versions visées :** MongoDB 7.0–8.x ; certaines commandes de supervision exigent des droits supplémentaires et ne sont pas proposées sur toutes les offres Atlas. Exemples non exécutés sur serveur de test.
 
+## MySQL / MariaDB
+
+| Situation | Fiche |
+|---|---|
+| Incident | [00 — Runbook express](mysql-mariadb/00-triage-5-minutes.md) |
+| Connexion | [01 — Connexion & instance](mysql-mariadb/01-connexion-instance.md) |
+| Lenteurs | [02 — Sessions & connexions](mysql-mariadb/02-sessions-connexions.md) |
+| Disque | [03 — Espace & tailles](mysql-mariadb/03-espace-bases.md) |
+| Réplication | [04 — Réplication](mysql-mariadb/04-replication.md) |
+| Backup | [05 — Sauvegardes](mysql-mariadb/05-sauvegardes.md) |
+| Alertes | [06 — Erreurs & logs](mysql-mariadb/06-erreurs-logs.md) |
+
+**Cible :** MySQL 8.0/8.4 et MariaDB 10.11/11.x, avec commandes de réplication distinctes. Exemples non exécutés en laboratoire.
+
 **Principe pour les cheatsheets et futurs labs :** un objectif concret, commandes reproductibles, lecture rapide du résultat ; un runbook seulement si utile, aucun fichier superflu.
 
 Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/) · [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/19/) · [MongoDB](https://www.mongodb.com/docs/manual/)
