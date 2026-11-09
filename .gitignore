@@ -1,0 +1,19 @@
+# Éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Secrets et sorties locales
+.env
+.env.*
+!.env.example
+*.log
+*.dump
+*.backup
+*.sql.gz
+*.pem
+*.key
+secrets/
+outputs/
