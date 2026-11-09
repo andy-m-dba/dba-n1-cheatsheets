@@ -77,6 +77,20 @@
 
 **Cible :** MySQL 8.0/8.4 et MariaDB 10.11/11.x, avec commandes de réplication distinctes. Exemples non exécutés en laboratoire.
 
+## Redis
+
+| Situation | Fiche |
+|---|---|
+| Incident | [00 — Runbook express](redis/00-triage-5-minutes.md) |
+| Connexion | [01 — Connexion & version](redis/01-connexion-version.md) |
+| Mémoire | [02 — Mémoire & évictions](redis/02-memoire-evictions.md) |
+| Connexions / ralentissement | [03 — Clients & latence](redis/03-clients-latence.md) |
+| Cluster / réplication | [04 — Réplication & cluster](redis/04-replication-cluster.md) |
+| Backups | [05 — Persistance](redis/05-persistance-backups.md) |
+| Alertes | [06 — Erreurs & stats](redis/06-erreurs-stats.md) |
+
+**Cible :** Redis Open Source 7.x–8.x, à adapter à l'offre managée, TLS et ACL. Exemples non exécutés sur serveur de test.
+
 **Principe pour les cheatsheets et futurs labs :** un objectif concret, commandes reproductibles, lecture rapide du résultat ; un runbook seulement si utile, aucun fichier superflu.
 
 Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/) · [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/19/) · [MongoDB](https://www.mongodb.com/docs/manual/)
