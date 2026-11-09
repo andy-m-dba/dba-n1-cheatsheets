@@ -1,18 +1,19 @@
 # MYSQL-N1-05 — Sauvegardes
 
-**Quand ?** Job en échec, sauvegarde attendue absente, risque RPO.
+**Quand ?** Job en échec, backup absent ou alerte RPO.
 
-### Vérifier l'outil utilisé (lecture seule)
-- `mysqldump` / `mariadb-dump` : ordonnanceur et statut des jobs.
-- `mysqlbackup`, `mariadb-backup`, snapshots ou solution tierce : console de backup.
-- Binlogs : vérifier la **politique** attendue, sans modifier la rétention.
+### Vérifier dans l'outil autorisé (lecture seule)
+- `mysqldump` / `mariadb-dump` : ordonnanceur, heure et statut.
+- `mysqlbackup` / `mariadb-backup` : console ou rapports de sauvegarde.
+- Snapshots / service managé : tableau de bord prévu par l'organisation.
+- Pour le PITR, contrôler **l'état déclaré** des journaux nécessaires, sans les manipuler.
 
 ### Lecture rapide
-- Dernier job terminé ≠ preuve de sauvegarde **restaurable**.
-- Snapshot présent ≠ vérification de cohérence ou de PITR.
-- Absence de job dans l'ordonnanceur courant ≠ absence de toutes les sauvegardes.
-- Comparer dernier succès et fréquence au RPO/RTO contractuels.
+- Comparer le dernier succès et la fréquence au **RPO** attendu.
+- Job `success` ≠ sauvegarde restaurable : seul un test de restauration l'atteste.
+- L'historique incomplet d'un outil ne prouve pas l'absence de toute sauvegarde.
+- La capacité à restaurer dans le temps prévu dépend aussi du **RTO**.
 
-**Escalade :** base, outil, type, dernière réussite, statut, erreur expurgée. Aucun backup forcé, purge binlog ou restauration N1.
+**Escalade :** base, outil, type, dernier succès, échec expurgé et objectif concerné. Aucun backup forcé, `RESTORE` ou purge de binlogs N1.
 
-[Sources : MySQL Backup](https://dev.mysql.com/doc/refman/8.4/en/backup-and-recovery.html) · [MariaDB Backup](https://mariadb.com/docs/server/server-usage/backup-and-restore/)
+[Sources : MySQL](https://dev.mysql.com/doc/refman/8.4/en/backup-and-recovery.html) · [MariaDB](https://mariadb.com/docs/server/server-usage/backup-and-restore/)
