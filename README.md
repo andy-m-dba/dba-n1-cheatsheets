@@ -19,8 +19,22 @@
 
 **Versions visées :** PostgreSQL 14 à 18 ; vérifier la compatibilité avec la version réellement exploitée. Exemples documentaires, non exécutés sur une instance de test.
 
+## SQL Server
+
+| Situation | Fiche |
+|---|---|
+| Incident en cours | [00 — Runbook express](sqlserver/00-triage-5-minutes.md) |
+| Connexion impossible / version | [01 — Connexion & instance](sqlserver/01-connexion-instance.md) |
+| Base indisponible | [02 — État des bases](sqlserver/02-etat-bases.md) |
+| Lenteur / sessions / blocages | [03 — Sessions & blocages](sqlserver/03-sessions-blocages.md) |
+| Stockage / fichiers | [04 — Espace & fichiers](sqlserver/04-espace-fichiers.md) |
+| Backup / RPO | [05 — Sauvegardes](sqlserver/05-sauvegardes.md) |
+| Réplication / AG | [06 — Always On](sqlserver/06-always-on.md) |
+
+**Versions visées :** SQL Server 2019, 2022, 2025 (instances classiques ; Azure SQL Database a des droits et vues différents). Les exemples ne sont pas exécutés sur une instance de test.
+
 ## À venir
 
-`sqlserver/`, `oracle/`, `mongodb/` : même format court.
+`oracle/`, `mongodb/` : même format court.
 
-Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [Politique de versions](https://www.postgresql.org/support/versioning/)
+Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/) 
