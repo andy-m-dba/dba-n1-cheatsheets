@@ -1,52 +1,33 @@
-# PG-N1-01 — Connexion et identification
+# PG-N1-01 — Connexion & version
 
-**Niveau :** N1 · **Statut :** Brouillon · **Revue documentaire :** 2026-11-09 · **Test réel :** Non
+**Quand ?** Connexion refusée, timeout, doute sur le serveur ou le rôle.
 
-## Symptômes
-
-Connexion refusée, timeout, échec d'authentification, doute sur le rôle du serveur.
-
-## Prérequis
-
-Poste, réseau et compte autorisés ; `psql` et `pg_isready` installés. Ne jamais ajouter de mot de passe à une ligne de commande ou au dépôt.
-
-## Vérifications
+### Commandes
 
 ```bash
-pg_isready -h HOTE_EXEMPLE -p 5432 -d BASE_EXEMPLE -U UTILISATEUR_LECTURE
-psql -X -h HOTE_EXEMPLE -p 5432 -d BASE_EXEMPLE -U UTILISATEUR_LECTURE
+pg_isready -h HOST -p 5432 -d DATABASE -U LECTURE
+psql -X -h HOST -p 5432 -d DATABASE -U LECTURE
 ```
 
-Dans `psql` :
-
-```text
-\conninfo
-```
+Dans `psql` (après connexion) :
 
 ```sql
-SELECT current_database() AS base,
-       current_user AS utilisateur,
-       inet_server_addr() AS adresse_serveur,
-       inet_server_port() AS port,
-       current_setting('server_version') AS version_serveur,
-       pg_is_in_recovery() AS est_standby;
+SELECT current_database() AS base, current_user AS utilisateur,
+       current_setting('server_version') AS version,
+       pg_is_in_recovery() AS standby;
 ```
 
-- `est_standby = true` : instance en recovery/standby.
-- `false` : hors recovery, normalement primaire selon l'architecture.
-- `inet_server_addr()` peut valoir `NULL` via socket Unix.
-- Version `psql` et version serveur ne sont pas nécessairement identiques.
+### Lecture rapide
 
-## Erreurs courantes
-
-| Message | Piste possible, non confirmée |
+| Observation | Vérifier / transmettre |
 |---|---|
-| `connection refused` | Service non à l'écoute ou hôte/port erroné |
-| `timeout` | Réseau, filtrage ou service |
-| `password authentication failed` | Identifiants ou politique d'authentification |
-| `no pg_hba.conf entry` | Règle d'accès non applicable |
-| `database ... does not exist` | Cible erronée |
+| `connection refused` | Hôte, port, service ; remonter sans redémarrer |
+| `timeout` | Réseau, filtrage, service |
+| `password authentication failed` | Authentification ; ne jamais exposer le mot de passe |
+| `no pg_hba.conf entry` | Politique d'accès ; remonter au N2 |
+| `standby = true` | Instance en recovery / standby |
+| `standby = false` | Hors recovery ; confirmer la topologie HA dans l'inventaire |
 
-**Escalade :** transmettre erreur expurgée, heure, adresse logique ciblée via ticket interne et impact. Ne modifier ni `pg_hba.conf` ni les comptes.
+**Escalade :** heure, erreur expurgée, cible logique, impact et résultat. Aucun changement `pg_hba.conf` ou rôle.
 
-**Sources :** [psql](https://www.postgresql.org/docs/current/app-psql.html) · [pg_isready](https://www.postgresql.org/docs/current/app-pg-isready.html).
+[Références : psql](https://www.postgresql.org/docs/current/app-psql.html) · [pg_isready](https://www.postgresql.org/docs/current/app-pg-isready.html)

@@ -1,60 +1,41 @@
-# PG-N1-02 — Sessions et blocages
+# PG-N1-02 — Sessions & verrous
 
-**Niveau :** N1 · **Statut :** Brouillon · **Revue documentaire :** 2026-11-09 · **Test réel :** Non
+**Quand ?** Lenteurs, transactions en attente, trop de sessions.
 
-## Symptômes
-
-Lenteurs, application figée, sessions en attente, connexions anormalement nombreuses.
-
-## Prérequis et précautions
-
-Accès SQL de lecture. Les colonnes des autres sessions peuvent être masquées selon les privilèges. Ne pas transmettre le texte SQL métier en dehors du canal interne autorisé.
-
-## 1. Sessions par base et état
+### Répartition des connexions clientes
 
 ```sql
-SELECT datname, state, count(*) AS nb
+SELECT state, count(*) AS nb
 FROM pg_stat_activity
-GROUP BY datname, state
-ORDER BY datname, nb DESC;
+WHERE backend_type = 'client backend'
+GROUP BY state ORDER BY nb DESC;
 ```
 
-- `active` : requête en cours, pas nécessairement lente.
-- `idle` : attend une nouvelle commande, souvent normal.
-- `idle in transaction` : transaction ouverte mais sans requête active, à surveiller.
-- `state = NULL` : certaines sessions techniques ou informations non exposées.
-
-## 2. Requêtes actives les plus anciennes (sans texte SQL)
+### Transactions ouvertes les plus anciennes
 
 ```sql
-SELECT pid, usename, datname, state,
-       wait_event_type, wait_event,
-       now() - query_start AS duree_requete
+SELECT pid, datname, state, wait_event_type, wait_event,
+       now() - xact_start AS age_transaction
 FROM pg_stat_activity
-WHERE state = 'active'
-  AND pid <> pg_backend_pid()
-ORDER BY query_start ASC NULLS LAST
-LIMIT 20;
+WHERE backend_type = 'client backend' AND xact_start IS NOT NULL
+ORDER BY xact_start LIMIT 10;
 ```
 
-Une durée élevée n'établit pas à elle seule une anomalie.
-
-## 3. Processus bloqués
+### Blocages visibles (requête ponctuelle)
 
 ```sql
-SELECT pid, datname, usename, wait_event_type, wait_event,
-       pg_blocking_pids(pid) AS pids_bloqueurs
+SELECT pid, wait_event, pg_blocking_pids(pid) AS bloque_par
 FROM pg_stat_activity
-WHERE cardinality(pg_blocking_pids(pid)) > 0
-ORDER BY pid;
+WHERE backend_type = 'client backend' AND wait_event_type = 'Lock';
 ```
 
-Une vue vide indique l'absence de blocage visible au moment du relevé, **pas** l'absence de tout problème de performance.
+### Lecture rapide
 
-## Escalade
+- `idle in transaction` : transaction ouverte inactive ; à signaler si durable.
+- `Lock` : attente de verrou ; relever les PID (sans tuer de session).
+- Résultat vide : rien de visible **à cet instant**. Certaines données sont masquées sans droits de supervision.
+- Ne pas exécuter `pg_blocking_pids()` en boucle à haute fréquence.
 
-Consigner date, impact, base, nombre de sessions, durées observées et PID bloqués/bloqueurs dans un ticket interne. Escalader si impact ou seuil local dépassé.
+**Escalade :** impact, heure, nombre de sessions, âge, PID bloqués. Ne jamais lancer `pg_cancel_backend` ou `pg_terminate_backend` en N1 sans procédure approuvée.
 
-**Interdit N1 autonome :** `pg_cancel_backend`, `pg_terminate_backend` ou tout changement de paramètre.
-
-**Source :** [Statistiques PostgreSQL](https://www.postgresql.org/docs/current/monitoring-stats.html).
+[Référence : pg_stat_activity](https://www.postgresql.org/docs/current/monitoring-stats.html)

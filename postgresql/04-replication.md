@@ -1,55 +1,35 @@
-# PG-N1-04 — Rôle et réplication physique
+# PG-N1-04 — Réplication physique
 
-**Niveau :** N1 · **Statut :** Brouillon · **Revue documentaire :** 2026-11-09 · **Test réel :** Non
+**Quand ?** Standby absent, connexion de réplication perdue, alerte de retard.
 
-## Symptômes
-
-Réplica absent, standby en retard, alerte WAL receiver ou doute sur le rôle d'un nœud.
-
-**Périmètre :** réplication physique native. Patroni, repmgr et services managés nécessitent un runbook complémentaire adapté.
-
-## Identifier le rôle
+### Rôle du nœud
 
 ```sql
-SELECT pg_is_in_recovery() AS est_standby;
+SELECT pg_is_in_recovery() AS standby;
 ```
 
-`true` : recovery / standby. `false` : hors recovery, généralement primaire.
-
-## Sur un primaire : réplicas connectés
+### Sur le primaire : émetteurs WAL connectés
 
 ```sql
-SELECT application_name, client_addr, state, sync_state,
+SELECT application_name, state, sync_state,
        write_lag, flush_lag, replay_lag
-FROM pg_stat_replication
-ORDER BY application_name;
+FROM pg_stat_replication;
 ```
 
-- `streaming` : WAL sender en flux.
-- Résultat vide : aucun WAL sender visible maintenant ; anomalie uniquement si un replica était attendu.
-- `write_lag`, `flush_lag` et `replay_lag` peuvent être `NULL` avec un réplica à jour ou système inactif. Ces durées ne sont pas des prévisions de rattrapage.
-
-## Sur un standby : WAL receiver
+### Sur le standby : réception WAL
 
 ```sql
-SELECT status, sender_host, last_msg_receipt_time,
-       latest_end_lsn, latest_end_time
+SELECT status, last_msg_receipt_time, latest_end_time
 FROM pg_stat_wal_receiver;
 ```
 
-Une vue vide doit être comparée à l'architecture prévue, notamment archivage WAL versus streaming.
+### Lecture rapide
 
-## Dernier commit rejoué sur standby
+- `streaming` signifie connexion en flux, pas nécessairement réplica à jour.
+- Aucune ligne n'est anormale **que si** un émetteur/récepteur est attendu.
+- Les champs `*_lag` peuvent être `NULL` ; ils ne prédisent pas le rattrapage.
+- Valider la topologie attendue avec l'inventaire et l'outil HA.
 
-```sql
-SELECT pg_last_xact_replay_timestamp() AS dernier_commit_rejoue,
-       now() - pg_last_xact_replay_timestamp() AS age_dernier_commit;
-```
+**Escalade :** nœud concerné, état attendu/observé, heure, supervision. **Jamais de promotion ou failover N1.**
 
-Une durée élevée peut simplement signaler l'absence d'écritures sur le primaire. `NULL` est possible si aucun commit n'a été rejoué.
-
-## Escalade
-
-Réplica attendu absent, retard dépassant le seuil local ou indisponibilité : transmettre état observé et alerte à N2/N3. Ne pas promouvoir de standby et ne pas déclencher de failover.
-
-**Source :** [Vues de monitoring](https://www.postgresql.org/docs/current/monitoring-stats.html).
+[Référence : vues de réplication](https://www.postgresql.org/docs/current/monitoring-stats.html)

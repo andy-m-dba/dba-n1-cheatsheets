@@ -1,58 +1,47 @@
-# PG-N1-00 — Triage initial (5 minutes)
+# PG-N1-00 — Runbook express : incident PostgreSQL (5 min)
 
-**Niveau :** N1 · **Statut :** Brouillon · **Revue documentaire :** 2026-11-09 · **Test réel :** Non
+**Quand ?** Alerte « base inaccessible », lenteurs ou statut inconnu.
 
-## Objectif
+### 1. Identifier l'impact (1 min)
 
-Qualifier « PostgreSQL inaccessible / lent / alerte » sans modifier le service.
+Noter **heure + fuseau**, application, symptôme exact, utilisateurs affectés et alerte de supervision.
 
-## 1. Noter les faits
-
-Heure et fuseau, alerte exacte, service concerné, étendue de l'impact métier, identité de l'instance dans les outils internes et changements récents connus. Ne rien publier de sensible.
-
-## 2. Disponibilité du serveur
+### 2. Tester la disponibilité (1 min)
 
 ```bash
-pg_isready -h HOTE_EXEMPLE -p 5432 -d BASE_EXEMPLE -U UTILISATEUR_LECTURE
-echo $?
+pg_isready -h HOST -p 5432 -d DATABASE -U LECTURE
+echo $?   # 0=accepte, 1=rejette, 2=pas de réponse, 3=paramètre invalide
 ```
 
-| Code | Interprétation |
-|---|---|
-| `0` | Serveur accepte les connexions ; ne prouve pas que l'application fonctionne |
-| `1` | Connexions refusées par le serveur, parfois transitoires |
-| `2` | Aucune réponse obtenue |
-| `3` | Paramètres incorrects / test non effectué |
+`0` **n'atteste ni l'authentification ni la santé de l'application**.
 
-`pg_isready` ne valide pas la réussite de l'authentification. Éviter les paramètres non autorisés, qui peuvent produire des échecs dans les journaux.
-
-## 3. Si connexion SQL autorisée
+### 3. Si l'accès SQL est possible (2 min)
 
 ```sql
-SELECT now() AS heure_serveur,
-       current_database() AS base,
-       current_user AS compte,
-       pg_is_in_recovery() AS est_standby,
+SELECT now() AS heure, current_database() AS base,
+       pg_is_in_recovery() AS standby,
        pg_postmaster_start_time() AS demarrage;
 
 SELECT state, count(*) AS nb
 FROM pg_stat_activity
-GROUP BY state
-ORDER BY nb DESC;
+WHERE backend_type = 'client backend'
+GROUP BY state;
 ```
 
-## 4. Orienter le diagnostic
+Pour approfondir : [connexion](01-connexion-version.md) · [sessions](02-sessions-verrous.md) · [disque](03-espace-capacite.md) · [réplication](04-replication.md) · [WAL](05-wal-sauvegardes.md).
 
-- Connexion en échec : [01 — Connexion](01-connexion-version.md).
-- Nombre inhabituel de sessions ou lenteur : [02 — Sessions](02-sessions-verrous.md).
-- Alerte disque : [03 — Espace](03-espace-capacite.md).
-- Alerte standby : [04 — Réplication](04-replication.md).
-- Alerte backup / WAL : [05 — WAL](05-wal-sauvegardes.md).
+### 4. Escalader et transmettre (1 min)
 
-## Escalade
+```text
+Heure (TZ) : ...
+Service / impact : ...
+Alerte / erreur expurgée : ...
+pg_isready : code ...
+Accès SQL : OK / KO ; rôle : primaire / standby / inconnu
+Constats et écarts avec l'état attendu : ...
+Vérifications impossibles (droits, réseau) : ...
+```
 
-Indisponibilité, risque de perte de données, saturation ou impact métier majeur : ouvrir un ticket immédiatement selon la matrice locale. [Modèle de ticket](06-escalade.md).
+**Escalade immédiate** si indisponibilité métier, risque de perte de données ou stockage presque saturé selon les seuils internes. Pas de redémarrage, purge WAL, kill session ou failover par le N1.
 
-**Ne pas** redémarrer, purger WAL, terminer des sessions ni déclencher une bascule.
-
-**Source :** [pg_isready](https://www.postgresql.org/docs/current/app-pg-isready.html).
+[Référence : pg_isready](https://www.postgresql.org/docs/current/app-pg-isready.html)
