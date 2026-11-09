@@ -33,8 +33,25 @@
 
 **Versions visées :** SQL Server 2019, 2022, 2025 (instances classiques ; Azure SQL Database a des droits et vues différents). Les exemples ne sont pas exécutés sur une instance de test.
 
+## Oracle
+
+| Situation | Fiche |
+|---|---|
+| Incident / ORA-xxxxx | [00 — Runbook express](oracle/00-triage-5-minutes.md) |
+| Connexion / instance | [01 — Connexion & rôle](oracle/01-connexion-instance.md) |
+| PDB inaccessible | [02 — État des PDB](oracle/02-etat-pdb.md) |
+| Lenteurs / verrous | [03 — Sessions & blocages](oracle/03-sessions-blocages.md) |
+| Stockage / FRA | [04 — Tablespaces & FRA](oracle/04-tablespaces-fra.md) |
+| Sauvegardes | [05 — RMAN](oracle/05-sauvegardes.md) |
+| Réplication | [06 — Data Guard](oracle/06-data-guard.md) |
+| Erreurs récentes | [07 — Alert log](oracle/07-alert-log.md) |
+
+**Cible :** Oracle Database 19c et versions récentes compatibles ; adapter à l'architecture CDB/PDB, RAC, Data Guard et aux privilèges réels. Exemples non testés en instance.
+
 ## À venir
 
-`oracle/`, `mongodb/` : même format court.
+`mongodb/` : même format court.
 
-Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/) 
+**Principe partagé pour les prochaines cheatsheets et labs :** un objectif concret, commandes reproductibles, lecture rapide du résultat ; un runbook seulement si utile, aucun fichier superflu.
+
+Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/) · [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/19/)
