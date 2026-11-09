@@ -48,10 +48,21 @@
 
 **Cible :** Oracle Database 19c et versions récentes compatibles ; adapter à l'architecture CDB/PDB, RAC, Data Guard et aux privilèges réels. Exemples non testés en instance.
 
-## À venir
+## MongoDB
 
-`mongodb/` : même format court.
+| Situation | Fiche |
+|---|---|
+| Incident / alerte | [00 — Runbook express](mongodb/00-triage-5-minutes.md) |
+| Connexion / version / rôle | [01 — Connexion & version](mongodb/01-connexion-version.md) |
+| Base ou collection inaccessible | [02 — Bases & collections](mongodb/02-bases-collections.md) |
+| Lenteurs / connexions | [03 — Opérations & connexions](mongodb/03-operations-connexions.md) |
+| Stockage / disque | [04 — Espace & stockage](mongodb/04-espace-stockage.md) |
+| Replica set | [05 — Réplication](mongodb/05-replication.md) |
+| Backup / RPO | [06 — Sauvegardes](mongodb/06-sauvegardes.md) |
+| Erreurs récentes | [07 — Logs](mongodb/07-logs.md) |
 
-**Principe partagé pour les prochaines cheatsheets et labs :** un objectif concret, commandes reproductibles, lecture rapide du résultat ; un runbook seulement si utile, aucun fichier superflu.
+**Versions visées :** MongoDB 7.0–8.x ; certaines commandes de supervision exigent des droits supplémentaires et ne sont pas proposées sur toutes les offres Atlas. Exemples non exécutés sur serveur de test.
 
-Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/) · [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/19/)
+**Principe pour les cheatsheets et futurs labs :** un objectif concret, commandes reproductibles, lecture rapide du résultat ; un runbook seulement si utile, aucun fichier superflu.
+
+Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/) · [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/19/) · [MongoDB](https://www.mongodb.com/docs/manual/)
