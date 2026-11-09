@@ -45,15 +45,19 @@ Une durée élevée n'établit pas à elle seule une anomalie.
 ## 3. Processus bloqués
 
 ```sql
-SELECT pid, datname, usename, wait_event_type, wait_event,
-       pg_blocking_pids(pid) AS pids_bloqueurs
-FROM pg_stat_activity
-WHERE backend_type = 'client backend'
-  AND cardinality(pg_blocking_pids(pid)) > 0
+WITH diagnostic AS MATERIALIZED (
+  SELECT pid, datname, usename, wait_event_type, wait_event,
+         pg_blocking_pids(pid) AS pids_bloqueurs
+  FROM pg_stat_activity
+  WHERE backend_type = 'client backend'
+)
+SELECT pid, datname, usename, wait_event_type, wait_event, pids_bloqueurs
+FROM diagnostic
+WHERE cardinality(pids_bloqueurs) > 0
 ORDER BY pid;
 ```
 
-Une vue vide indique l'absence de blocage visible au moment du relevé, **pas** l'absence de tout problème de performance. Les PID retournés peuvent être dupliqués avec le parallélisme ; `0` représente parfois une transaction préparée. `pg_blocking_pids()` interroge le gestionnaire de verrous : **ne pas lancer ce relevé à haute fréquence**. Ne jamais interpréter des colonnes masquées comme des valeurs observées.
+Une vue vide indique l'absence de blocage visible au moment du relevé, **pas** l'absence de tout problème de performance. Les PID retournés peuvent être dupliqués avec le parallélisme ; `0` représente parfois une transaction préparée. La CTE `MATERIALIZED` (PostgreSQL 12+) évite le recalcul de `pg_blocking_pids()` pour une même session dans ce relevé. La fonction interroge le gestionnaire de verrous : **ne pas lancer ce relevé à haute fréquence**. Ne jamais interpréter des colonnes masquées comme des valeurs observées.
 
 ## Escalade
 
