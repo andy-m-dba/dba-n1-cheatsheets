@@ -36,6 +36,8 @@ SELECT current_database() AS base,
 - `false` : hors recovery, normalement primaire selon l'architecture.
 - `inet_server_addr()` peut valoir `NULL` via socket Unix.
 - Version `psql` et version serveur ne sont pas nécessairement identiques.
+- `pg_is_in_recovery() = false` ne garantit pas que ce serveur soit le bon primaire pour l'application : vérifier l'inventaire et l'orchestrateur HA éventuel.
+- Ne publier ni la sortie brute de `\conninfo` ni les adresses renvoyées dans un dépôt GitHub.
 
 ## Erreurs courantes
 

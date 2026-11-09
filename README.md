@@ -59,4 +59,4 @@ dba-n1-cheatsheets/
 
 Suivre [CONTRIBUTING.md](CONTRIBUTING.md), proposer les modifications via Pull Request et conserver le statut **Brouillon** tant qu'aucune revue N2/N3 et aucun test adapté n'ont eu lieu.
 
-**Vérification documentaire initiale :** 2026-11-09. **Validation en environnement réel :** non réalisée.
+**Revue documentaire initiale :** 2026-11-09. Une revue technique documentaire complémentaire est proposée en [Pull Request](https://github.com/andy-m-dba/dba-n1-cheatsheets/pulls). **Validation N2/N3 et tests d'exécution : non réalisés.**

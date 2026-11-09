@@ -17,9 +17,10 @@ FROM pg_stat_archiver;
 ```
 
 - `archive_mode=off` peut être normal selon l'architecture.
-- `failed_count` est cumulatif depuis `stats_reset`. Une valeur non nulle ne prouve pas un échec en cours.
+- `failed_count` est cumulatif depuis `stats_reset`. Une valeur non nulle ne prouve pas un échec en cours ; des échecs provoquant le redémarrage de l'archiver peuvent aussi ne pas être comptabilisés. Corréler avec l'outil de supervision et les journaux expurgés.
 - Comparer deux relevés horodatés ainsi que l'état de la solution de sauvegarde.
-- Une date d'archivage ancienne peut être normale lorsqu'aucun WAL récent n'est prêt à archiver.
+- Une date d'archivage ancienne peut être normale lorsqu'aucun WAL récent n'est prêt à archiver. Un `last_archived_wal` récent ne prouve pas que tous les WAL antérieurs ont été archivés.
+- `archive_mode` actif ne prouve pas qu'une destination d'archivage soit correctement configurée ni que la politique de récupération soit satisfaite.
 - Archivage réussi ≠ sauvegarde restaurable.
 
 ## Sauvegardes
@@ -36,4 +37,4 @@ Job attendu en échec, délai de sauvegarde hors objectifs locaux, compteur d'é
 
 **Interdits :** purge WAL, changement de `archive_command`, suppression de sauvegarde, tentative de restauration autonome.
 
-**Source :** [Statistiques de l'archivage](https://www.postgresql.org/docs/current/monitoring-stats.html).
+**Sources :** [Statistiques de l'archivage](https://www.postgresql.org/docs/18/monitoring-stats.html) · [Archivage continu et PITR](https://www.postgresql.org/docs/18/continuous-archiving.html).

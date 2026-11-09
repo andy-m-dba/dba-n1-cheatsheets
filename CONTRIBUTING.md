@@ -21,6 +21,7 @@ Une fiche = un objectif de diagnostic. Rédiger en français, conserver les comm
 - [ ] Interprétation contextualisée ; hypothèses non présentées comme causes
 - [ ] Pas de commande modifiant données, service, paramètres ou rôles
 - [ ] Test en environnement de référence documenté, ou **Non testé** indiqué
-- [ ] Revue technique N2/N3 avant passage au statut **Validé**
+- [ ] Revue documentaire distinguée des tests d'exécution
+- [ ] Revue technique N2/N3 et tests adaptés avant passage au statut **Validé**
 
 Les seuils et niveaux de sévérité restent ceux de l'organisation. Les changements passent par Pull Request.

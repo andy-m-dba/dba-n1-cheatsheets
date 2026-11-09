@@ -25,7 +25,7 @@ FROM pg_stat_replication
 ORDER BY application_name;
 ```
 
-- `streaming` : WAL sender en flux.
+- `streaming` : WAL sender en flux, sans preuve suffisante que le standby soit à jour. La vue peut aussi exposer un WAL sender associé à la réplication logique : consulter l'inventaire de l'architecture.
 - Résultat vide : aucun WAL sender visible maintenant ; anomalie uniquement si un replica était attendu.
 - `write_lag`, `flush_lag` et `replay_lag` peuvent être `NULL` avec un réplica à jour ou système inactif. Ces durées ne sont pas des prévisions de rattrapage.
 
@@ -46,7 +46,7 @@ SELECT pg_last_xact_replay_timestamp() AS dernier_commit_rejoue,
        now() - pg_last_xact_replay_timestamp() AS age_dernier_commit;
 ```
 
-Une durée élevée peut simplement signaler l'absence d'écritures sur le primaire. `NULL` est possible si aucun commit n'a été rejoué.
+Exécuter cette requête **uniquement sur un standby**. Une durée élevée peut simplement signaler l'absence d'écritures sur le primaire : **ce n'est pas une mesure fiable du retard de réplication**. `NULL` est possible si aucun commit n'a été rejoué. Comparer aux alertes et métriques de l'outil de supervision.
 
 ## Escalade
 

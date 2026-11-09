@@ -15,6 +15,7 @@ Accès SQL de lecture. Les colonnes des autres sessions peuvent être masquées 
 ```sql
 SELECT datname, state, count(*) AS nb
 FROM pg_stat_activity
+WHERE backend_type = 'client backend'
 GROUP BY datname, state
 ORDER BY datname, nb DESC;
 ```
@@ -22,7 +23,8 @@ ORDER BY datname, nb DESC;
 - `active` : requête en cours, pas nécessairement lente.
 - `idle` : attend une nouvelle commande, souvent normal.
 - `idle in transaction` : transaction ouverte mais sans requête active, à surveiller.
-- `state = NULL` : certaines sessions techniques ou informations non exposées.
+- `state = NULL` : certaines informations non exposées (droits insuffisants) ou collecte désactivée ; l'exemple compte les connexions clientes, pas les processus internes.
+- `active` et `wait_event` décrivent deux dimensions différentes : une session active peut aussi être en attente.
 
 ## 2. Requêtes actives les plus anciennes (sans texte SQL)
 
@@ -31,7 +33,8 @@ SELECT pid, usename, datname, state,
        wait_event_type, wait_event,
        now() - query_start AS duree_requete
 FROM pg_stat_activity
-WHERE state = 'active'
+WHERE backend_type = 'client backend'
+  AND state = 'active'
   AND pid <> pg_backend_pid()
 ORDER BY query_start ASC NULLS LAST
 LIMIT 20;
@@ -45,11 +48,12 @@ Une durée élevée n'établit pas à elle seule une anomalie.
 SELECT pid, datname, usename, wait_event_type, wait_event,
        pg_blocking_pids(pid) AS pids_bloqueurs
 FROM pg_stat_activity
-WHERE cardinality(pg_blocking_pids(pid)) > 0
+WHERE backend_type = 'client backend'
+  AND cardinality(pg_blocking_pids(pid)) > 0
 ORDER BY pid;
 ```
 
-Une vue vide indique l'absence de blocage visible au moment du relevé, **pas** l'absence de tout problème de performance.
+Une vue vide indique l'absence de blocage visible au moment du relevé, **pas** l'absence de tout problème de performance. Les PID retournés peuvent être dupliqués avec le parallélisme ; `0` représente parfois une transaction préparée. `pg_blocking_pids()` interroge le gestionnaire de verrous : **ne pas lancer ce relevé à haute fréquence**. Ne jamais interpréter des colonnes masquées comme des valeurs observées.
 
 ## Escalade
 

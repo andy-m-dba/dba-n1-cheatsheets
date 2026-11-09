@@ -16,10 +16,11 @@ Lecture SQL autorisée et, pour les commandes Linux, accès au bon serveur expli
 SELECT datname, pg_size_pretty(pg_database_size(oid)) AS taille
 FROM pg_database
 WHERE datallowconn
+  AND has_database_privilege(oid, 'CONNECT')
 ORDER BY pg_database_size(oid) DESC;
 ```
 
-La fonction peut demander des privilèges supplémentaires pour certaines bases. Une taille SQL ne mesure pas l'espace libre du filesystem.
+Cette requête limite le relevé aux bases acceptant les connexions et accessibles au compte N1 ; elle ne mesure donc **pas nécessairement tout le cluster**. Certaines bases non accessibles requièrent une vérification N2/N3 avec les droits appropriés. Une taille SQL ne mesure ni l'espace libre du filesystem, ni à elle seule l'occupation WAL et backups. Éviter de répéter ce calcul très fréquemment sur les grandes instances.
 
 ## Connexions
 
@@ -29,7 +30,7 @@ SELECT count(*) AS connexions_observees,
 FROM pg_stat_activity;
 ```
 
-`max_connections` ne correspond pas exactement aux places ouvertes aux applications : réservations et contraintes additionnelles peuvent s'appliquer.
+`max_connections` ne correspond pas exactement aux places ouvertes aux applications : connexions réservées, processus internes et pools de connexions doivent être considérés. La configuration `reserved_connections` n'existe pas dans toutes les versions cibles ; ne pas en faire une dépendance commune PostgreSQL 14–18.
 
 ## Linux, uniquement avec autorisation
 

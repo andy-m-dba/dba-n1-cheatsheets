@@ -24,7 +24,7 @@ echo $?
 | `2` | Aucune réponse obtenue |
 | `3` | Paramètres incorrects / test non effectué |
 
-`pg_isready` ne valide pas la réussite de l'authentification. Éviter les paramètres non autorisés, qui peuvent produire des échecs dans les journaux.
+`pg_isready` ne valide ni la réussite de l'authentification, ni le fonctionnement de l'application. Des paramètres erronés peuvent créer des entrées d'échec dans les journaux ; utiliser les paramètres inventoriés et autorisés.
 
 ## 3. Si connexion SQL autorisée
 
@@ -40,6 +40,8 @@ FROM pg_stat_activity
 GROUP BY state
 ORDER BY nb DESC;
 ```
+
+Les données de `pg_stat_activity` sont partiellement masquées sans privilèges statistiques suffisants. Une mesure unique ne permet pas de conclure sur une tendance.
 
 ## 4. Orienter le diagnostic
 
