@@ -1,20 +1,20 @@
 # CASS-N1-02 — État du cluster
 
-**Quand ?** Nœud `DN`, état Joining/Leaving, incident multi-DC.
+**Quand ?** Nœud `DN`, état de topologie inhabituel, incident multi-DC.
 
-### Sur un point JMX autorisé
+### Commandes (JMX autorisé)
 ```bash
 nodetool -h HOST status
 nodetool -h HOST describecluster
 ```
 
 ### Lecture rapide
-- `UN` = Up / Normal ; `DN` = Down / Normal.
-- `UJ` / `UL` / `UM` : nœud up en changement de topologie ; comparer aux opérations planifiées.
-- `Load` = charge de données sur nœud, **pas** pourcentage de disque utilisé.
-- Le statut est vu **depuis le nœud interrogé** ; comparer depuis d'autres nœuds autorisés si résultats incohérents.
-- `describecluster` aide à constater une divergence de schéma ; ne pas modifier.
+- **1re lettre** : `U` = Up, `D` = Down ; **2e lettre** : `N` = Normal, `J` = Joining, `L` = Leaving, `M` = Moving.
+- `UN` : nœud Up / Normal. `DN` inattendu : incident à qualifier immédiatement.
+- `Load` : volume de données local, **pas** pourcentage de disque occupé.
+- `describecluster` : nom du cluster, partitioner et versions de schéma observées.
+- `status` affiche la **vue du nœud interrogé** : des nœuds peuvent avoir des perceptions différentes.
 
-**Escalade :** cluster/DC, nœuds attendus/observés, statut, heure, impact. Aucun `decommission`, `removenode`, `assassinate` ou `repair` N1.
+**Escalade :** DC, nœuds concernés, état attendu/observé, heure, impact. Aucun `decommission`, `removenode` ou `repair` N1.
 
-[Source : nodetool status](https://cassandra.apache.org/doc/latest/cassandra/managing/tools/nodetool/status.html)
+[Sources : status](https://cassandra.apache.org/doc/latest/cassandra/managing/tools/nodetool/status.html) · [describecluster](https://cassandra.apache.org/doc/latest/cassandra/managing/tools/nodetool/describecluster.html)

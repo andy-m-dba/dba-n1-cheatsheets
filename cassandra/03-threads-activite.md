@@ -1,6 +1,6 @@
-# CASS-N1-03 — Files d'attente & activité
+# CASS-N1-03 — Activité & files d'attente
 
-**Quand ?** Latence, timeouts, surcharge de thread pools.
+**Quand ?** Timeouts, hausse de latence ou surcharge du nœud.
 
 ### Commandes (JMX autorisé)
 ```bash
@@ -9,12 +9,12 @@ nodetool -h HOST info
 ```
 
 ### Lecture rapide
-- `Pending` : tâches en attente ; comparer à la tendance et au comportement habituel.
-- `Blocked` : tâches en blocage dans un pool, à contextualiser.
-- `Dropped` : messages abandonnés, compteurs souvent cumulés ; comparer deux relevés.
-- `info` : uptime, heap et état du nœud ; la heap n'est pas toute la mémoire OS.
-- Une mesure ponctuelle ne permet pas de conclure à une saturation durable.
+- `Active` : tâches en cours dans un pool ; `Pending` : tâches en attente.
+- `Blocked` : tâches bloquées dans le pool ; comparer à la situation normale.
+- `Dropped` : messages abandonnés ; **compteur cumulatif** à comparer sur deux relevés horodatés.
+- `info` : uptime, load et heap ; la heap JVM ne représente pas toute la RAM du serveur.
+- Une file momentanée n'est pas une preuve de saturation durable.
 
-**Escalade :** nœud, pool, Pending/Dropped, heure, erreurs et impact. Ne pas modifier les pools, la JVM ou les timeouts en N1.
+**Escalade :** nœud, pool concerné, Pending/Dropped, tendance, heure et impact. Aucun réglage des pools ou de la JVM N1.
 
-[Source : nodetool](https://cassandra.apache.org/doc/latest/cassandra/managing/tools/nodetool/nodetool.html)
+[Source : dépannage via nodetool](https://cassandra.apache.org/doc/stable/cassandra/troubleshooting/use_nodetool.html)

@@ -1,6 +1,6 @@
 # CASS-N1-05 — Compactions & streaming
 
-**Quand ?** Charge disque, lenteur, changement de topologie en cours.
+**Quand ?** Lenteur disque, tâches en attente ou mouvement de données inattendu.
 
 ### Commandes (JMX autorisé)
 ```bash
@@ -9,11 +9,12 @@ nodetool -h HOST netstats
 ```
 
 ### Lecture rapide
-- `compactionstats` : compactions actives/en attente ; vérifier la durée et la tendance.
-- `netstats` : streaming et activité réseau ; peut être normal lors d'un bootstrap ou rebuild planifié.
-- La présence d'une compaction ne prouve pas un incident ; comparer au comportement attendu.
-- Une activité absente peut aussi être normale ; les vues sont **ponctuelles**.
+- `compactionstats` : compactions actives, tâches en attente et progression estimée.
+- `netstats` : sessions de streaming et informations réseau visibles depuis ce nœud.
+- Une compaction ou un streaming peuvent être normaux pendant une maintenance planifiée.
+- Une durée estimée n'est **pas** une garantie de fin ; comparer deux relevés et l'impact.
+- Aucune activité visible n'exclut pas un autre problème de performance.
 
-**Escalade :** nœud, tâches, progression, opérations planifiées et impact. Ne lancer ni `repair`, `compact`, `rebuild` ni `cleanup` N1.
+**Escalade :** nœud, opérations visibles, progression, heure et impact. Aucun `repair`, `compact`, `rebuild` ou `cleanup` N1.
 
 [Sources : compactionstats](https://cassandra.apache.org/doc/latest/cassandra/managing/tools/nodetool/compactionstats.html) · [netstats](https://cassandra.apache.org/doc/latest/cassandra/managing/tools/nodetool/netstats.html)

@@ -1,12 +1,12 @@
 # CASS-N1-01 — Connexion & version
 
-**Quand ?** CQL indisponible, `Unauthorized`, timeout, mauvaise cible.
+**Quand ?** CQL inaccessible, timeout ou erreur d'authentification.
 
-### Connexion CQL (depuis un hôte autorisé)
+### Connexion CQL
 ```bash
 cqlsh HOST 9042
-# Utiliser le profil TLS/authentification validé de l'organisation.
 ```
+`9042` est le port courant, à vérifier dans l'inventaire. Utiliser `--ssl` lorsque TLS est requis et un profil `cqlshrc` / credentials protégé pour l'authentification. **Aucun mot de passe en argument.**
 
 ### Dans cqlsh
 ```sql
@@ -15,11 +15,11 @@ SELECT cluster_name, release_version, data_center,
 ```
 
 ### Lecture rapide
-- `release_version` : version du nœud ciblé, pas nécessairement de tout le cluster.
-- Timeout : réseau, endpoint CQL, TLS ou surcharge ; cause non confirmée.
-- `Unauthorized` : autorisation ou authentification ; ne pas élever les droits N1.
-- `9042` est le port CQL courant ; JMX/nodetool utilise un autre accès.
+- `release_version` : version **du nœud ciblé**, pas de tous les nœuds.
+- Timeout : réseau, port CQL, TLS ou surcharge ; cause non établie.
+- `Unauthorized` : droits CQL insuffisants ; erreur d'authentification : vérifier l'accès prévu.
+- Une connexion CQL réussie ne prouve **pas** que le cluster entier est sain.
 
-**Escalade :** heure, DC, nœud logique, erreur expurgée et impact. Aucun changement `cassandra.yaml` ou compte N1.
+**Escalade :** heure, nœud/DC, erreur expurgée, accès OK/KO, impact. Aucun changement de compte ou `cassandra.yaml` N1.
 
 [Source : cqlsh](https://cassandra.apache.org/doc/latest/cassandra/managing/tools/cqlsh.html)
