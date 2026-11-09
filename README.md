@@ -91,6 +91,21 @@
 
 **Cible :** Redis Open Source 7.x–8.x, à adapter à l'offre managée, TLS et ACL. Exemples non exécutés sur serveur de test.
 
+## Cassandra
+
+| Situation | Fiche |
+|---|---|
+| Incident | [00 — Runbook express](cassandra/00-triage-5-minutes.md) |
+| Connexion / version | [01 — Connexion & version](cassandra/01-connexion-version.md) |
+| État du ring | [02 — État du cluster](cassandra/02-etat-cluster.md) |
+| Lenteurs / files | [03 — Threads & activité](cassandra/03-threads-activite.md) |
+| Disque | [04 — Stockage & tables](cassandra/04-stockage.md) |
+| Compactions | [05 — Compactions & streaming](cassandra/05-compactions-streaming.md) |
+| Backup | [06 — Sauvegardes](cassandra/06-sauvegardes.md) |
+| Incidents | [07 — Logs](cassandra/07-logs.md) |
+
+**Cible :** Apache Cassandra 4.1/5.0. `nodetool` requiert un accès JMX autorisé, distinct de CQL. Exemples non exécutés en laboratoire.
+
 **Principe pour les cheatsheets et futurs labs :** un objectif concret, commandes reproductibles, lecture rapide du résultat ; un runbook seulement si utile, aucun fichier superflu.
 
 Documentation : [PostgreSQL](https://www.postgresql.org/docs/current/) · [SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/) · [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/19/) · [MongoDB](https://www.mongodb.com/docs/manual/)
