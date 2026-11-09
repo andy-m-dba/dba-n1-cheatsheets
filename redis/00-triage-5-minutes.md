@@ -1,31 +1,30 @@
 # REDIS-N1-00 — Runbook express (5 min)
 
-**Quand ?** Redis inaccessible, réponses lentes, alerte mémoire ou réplication.
+**Quand ?** Redis inaccessible, lenteur, alerte mémoire ou réplication.
 
-### 1. Relever (1 min)
-Heure + fuseau, service/cluster, impact, alerte et erreur expurgée.
+### 1. Identifier (1 min)
+Heure et fuseau, service/nœud, application, erreur expurgée, impact.
 
-### 2. Connexion (1 min)
+### 2. Se connecter (1 min)
 ```bash
 redis-cli -h HOST -p PORT --tls --user LECTURE --askpass
-# Adapter le certificat CA/TLS à la politique locale.
 ```
-**Ne jamais placer le secret dans la ligne de commande.** Sans TLS, utiliser uniquement une connexion explicitement autorisée.
+Adapter TLS (CA/certificat), port et ACL à l'inventaire. Désactiver `--tls` **uniquement** si la connexion non chiffrée est autorisée. Mot de passe à l'invite, jamais en argument.
 
-### 3. Dans redis-cli (2 min)
+### 3. Vérifier (2 min, dans redis-cli)
 ```text
 PING
 INFO server
 INFO clients
 INFO memory
 ```
-`PONG` = réponse de ce nœud ; **pas** une preuve de santé applicative ou cluster.
+`PONG` confirme la réponse du nœud, **pas** la santé de l'application ni du cluster. `INFO` peut être interdit par ACL.
 
-### 4. Orienter / escalader (1 min)
+### 4. Orienter et escalader (1 min)
 [Connexion](01-connexion-version.md) · [Mémoire](02-memoire-evictions.md) · [Clients](03-clients-latence.md) · [Réplication](04-replication-cluster.md) · [Persistance](05-persistance-backups.md) · [Erreurs](06-erreurs-stats.md).
 
-**Ticket :** heure, impact, cible, `PING`, valeurs relevées, anomalies et commandes refusées par les ACL.
+**Transmettre :** heure, impact, cible logique, `PING` OK/KO, compteurs et accès refusés.
 
-**Escalade immédiate :** indisponibilité, OOM, `cluster_state:fail`, réplica critique absent. Aucun `FLUSHALL`, `CONFIG SET`, `FAILOVER` ou redémarrage N1.
+**Escalade immédiate :** indisponibilité, OOM, `cluster_state:fail` ou réplica attendu absent. Aucun redémarrage, `FLUSHALL`, `CONFIG SET` ou failover N1.
 
 [Source : redis-cli](https://redis.io/docs/latest/develop/tools/cli/)

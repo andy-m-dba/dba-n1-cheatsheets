@@ -1,12 +1,12 @@
-# REDIS-N1-01 — Connexion & version
+# REDIS-N1-01 — Connexion & identification
 
-**Quand ?** `NOAUTH`, `WRONGPASS`, `ECONNREFUSED`, cible incertaine.
+**Quand ?** `NOAUTH`, `WRONGPASS`, timeout ou mauvaise cible.
 
-### Connexion (TLS selon inventaire)
+### Se connecter
 ```bash
 redis-cli -h HOST -p PORT --tls --user LECTURE --askpass
 ```
-Adapter les paramètres CA/certificat à l'environnement.
+Adapter CA/certificat et port à l'inventaire. Sans TLS, connexion uniquement si explicitement autorisée. Saisir le secret à l'invite.
 
 ### Dans redis-cli
 ```text
@@ -16,11 +16,11 @@ INFO server
 
 ### Lecture rapide
 - `redis_version` : version ; `redis_mode` : standalone, sentinel ou cluster.
-- `NOAUTH` / `WRONGPASS` : erreur de connexion/ACL ; ne jamais exposer le secret.
-- Timeout : DNS, réseau, TLS, service ou endpoint ; cause à confirmer.
-- `PONG` ne prouve pas que toutes les opérations de l'application réussissent.
-- `INFO` peut être interdit par les ACL : utiliser les métriques de supervision.
+- `NOAUTH` / `WRONGPASS` : authentification ou ACL ; ne pas exposer les identifiants.
+- `Connection refused` / timeout : réseau, port, TLS, service ou endpoint.
+- `PONG` ≠ santé applicative. `INFO` peut être interdit par les ACL.
+- Les informations décrivent **le nœud interrogé**, pas nécessairement tout le service.
 
-**Escalade :** heure, endpoint logique, erreur expurgée, mode, version et impact. Aucune modification ACL N1.
+**Escalade :** heure, cible logique, erreur expurgée, version/mode, impact. Aucun changement ACL ou service N1.
 
 [Sources : redis-cli](https://redis.io/docs/latest/develop/tools/cli/) · [INFO](https://redis.io/docs/latest/commands/info/)
