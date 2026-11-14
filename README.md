@@ -17,7 +17,9 @@
 
 **Utilisation :** adapter `HOST`, `DATABASE` et `LECTURE` aux valeurs de l'inventaire interne. Ne jamais copier de mot de passe ou de sortie sensible sur GitHub. Un résultat vide, `NULL` ou un accès refusé ne prouve pas qu'il n'y a pas d'incident.
 
-**Versions visées :** PostgreSQL 14 à 18 ; vérifier la compatibilité avec la version réellement exploitée. Exemples documentaires, non exécutés sur une instance de test.
+**Versions visées :** PostgreSQL 14–18. PostgreSQL 14 est en fin de support depuis le 12 novembre 2026. Adapter les commandes et les droits à la version exploitée.
+
+**Validation PostgreSQL :** 6/6 TP réussis sur PostgreSQL 17.12 en laboratoire Docker, le 14 novembre 2026. Les résultats couvrent les scénarios exécutés sur cette version.
 
 ## SQL Server
 
